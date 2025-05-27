@@ -2,6 +2,7 @@ from cryptography.fernet import Fernet
 from dotenv import load_dotenv
 import os #Access .env
 
+
 # Laod varibles from.env into the Environment
 load_dotenv()
 
@@ -17,7 +18,7 @@ fernet = Fernet(key)
 message = b"Hello World!"
 
 #Encrypt message
-encrypted = fernet.encrypt(message)
+encrypted_message = fernet.encrypt(message)
 
 # Print the encrypted message (in bytes)
-print("Encrypted:", encrypted)
+print("Encrypted:", encrypted_message)
