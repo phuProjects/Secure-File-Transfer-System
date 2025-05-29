@@ -15,6 +15,6 @@ if key is None:
 fernet = Fernet(key)
 
 #Function to encrypt message/file in bytes. 
-def encrypt_message(bytes_data):
+def encrypt_data(bytes_data):
     return fernet.encrypt(bytes_data)
 
