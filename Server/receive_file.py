@@ -25,7 +25,10 @@ print(f"Received encrypted data: {encrypted_data}")
 
 #Decrypt data
 decrypted_data = decrypt_data(encrypted_data)
-print(f"[+] Decrypted data:  {decrypted_data.decode()}")
+
+with open("receive_file.png", "wb") as file:
+    file.write(decrypted_data)
+#print(f"[+] Decrypted data:  {decrypted_data.decode()}")
 
 #Close connection & Socket
 conn.close()
