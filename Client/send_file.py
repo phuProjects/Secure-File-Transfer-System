@@ -2,11 +2,13 @@ import socket
 from encrypt import encrypt_data
 
 
-#Data & Encryption
-with open("tiny_image.png", "rb") as file:
-    file_data = file.read()
+#Reads and encrypt file
+def read_and_encrypt(filename):
+    with open(filename, "rb") as file:
+        file_data = file.read()
+    return encrypt_data(file_data)
 
-encrypted_data = encrypt_data(file_data)
+encrypted_data = read_and_encrypt("tiny_image.png")
 
 #host & port
 HOST = "127.0.0.1"
