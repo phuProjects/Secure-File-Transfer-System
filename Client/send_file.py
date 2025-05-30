@@ -3,8 +3,10 @@ from encrypt import encrypt_data
 
 
 #Data & Encryption
-data_to_send = b"Sensitive info" 
-encrypted_data = encrypt_data(data_to_send)
+with open("test.txt", "rb") as file:
+    file_data = file.read()
+
+encrypted_data = encrypt_data(file_data)
 
 #host & port
 HOST = "127.0.0.1"
