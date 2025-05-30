@@ -3,7 +3,7 @@ from encrypt import encrypt_data
 
 
 #Data & Encryption
-with open("test.txt", "rb") as file:
+with open("tiny_image.png", "rb") as file:
     file_data = file.read()
 
 encrypted_data = encrypt_data(file_data)
