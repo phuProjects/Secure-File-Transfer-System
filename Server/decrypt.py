@@ -7,5 +7,5 @@ load_dotenv()
 key = os.getenv("ENCRYPTION_KEY").encode()
 fernet = Fernet(key)
 
-def decrypt_message(encrypted_data):
+def decrypt_data(encrypted_data):
     return fernet.decrypt(encrypted_data)

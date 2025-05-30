@@ -1,4 +1,5 @@
 import socket
+from decrypt import decrypt_data
 
 #Host & Port
 HOST = "127.0.0.1" #Localhost
@@ -12,18 +13,20 @@ server_socket.bind((HOST,PORT))
 
 #Start listening for incoming connections (Allowing only one at a time)
 server_socket.listen(1)
-print(f"[*] Listening on {HOST}:{PORT}...")
+print(f"Listening on {HOST}:{PORT}...")
 
 #Accept connection from client
 conn, addr = server_socket.accept()
-print(f"[+] Connection established with {addr}")
+print(f"Connection established with {addr}")
 
 #Receive up to 1024 bytes of data from client
-data = conn.recv(1024)
-print(f"[+] Received encrypted message: {data}")
+encrypted_data = conn.recv(1024)
+print(f"Received encrypted data: {encrypted_data}")
 
-#Close connection
+#Decrypt data
+decrypted_data = decrypt_data(encrypted_data)
+print(f"[+] Decrypted data:  {decrypted_data.decode()}")
+
+#Close connection & Socket
 conn.close()
-
-#Close socket
 server_socket.close()

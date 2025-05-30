@@ -1,0 +1,10 @@
+# Ignore virtual environment
+env/
+
+
+# Ignore varibles from .env
+.env
+
+#Pycache
+
+__pycache__/

@@ -1,10 +1,10 @@
 import socket
-from encrypt import encrypt_message
+from encrypt import encrypt_data
 
 
 #Data & Encryption
 data_to_send = b"Sensitive info" 
-encrypted_message = encrypt_message(data_to_send)
+encrypted_data = encrypt_data(data_to_send)
 
 #host & port
 HOST = "127.0.0.1"
@@ -17,7 +17,7 @@ client_socket = socket.socket()
 client_socket.connect((HOST,PORT))
 
 #Send data to server
-client_socket.sendall(encrypted_message)
+client_socket.sendall(encrypted_data)
 
 #Close socket
 client_socket.close()
