@@ -1,14 +1,18 @@
 import socket
 from encrypt import encrypt_data
-
+import struct
 
 #Reads and encrypt file
-def read_and_encrypt(filename):
-    with open(filename, "rb") as file:
-        file_data = file.read()
-    return encrypt_data(file_data)
 
-encrypted_data = read_and_encrypt("tiny_image.png")
+def read_and_encrypt(file):
+    with open(file, "rb") as f:
+        f_data = f.read()
+    return encrypt_data(f_data)
+
+filename = "tiny_image.png"
+filename_bytes = filename.encode()
+encrypted_data = read_and_encrypt(filename)
+
 
 #host & port
 HOST = "127.0.0.1"
@@ -21,6 +25,10 @@ client_socket = socket.socket()
 client_socket.connect((HOST,PORT))
 
 #Send data to server
+client_socket.sendall(struct.pack('>I', len(filename_bytes))) #
+client_socket.sendall(filename_bytes)
+
+client_socket.sendall(struct.pack('>Q', len(encrypted_data)))
 client_socket.sendall(encrypted_data)
 
 #Close socket
