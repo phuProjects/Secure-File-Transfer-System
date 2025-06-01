@@ -25,10 +25,10 @@ client_socket = socket.socket()
 client_socket.connect((HOST,PORT))
 
 #Send data to server
-client_socket.sendall(struct.pack('>I', len(filename_bytes))) #
+client_socket.sendall(struct.pack('>I', len(filename_bytes))) #convert len of filename into bytes then sending via sendall
 client_socket.sendall(filename_bytes)
 
-client_socket.sendall(struct.pack('>Q', len(encrypted_data)))
+client_socket.sendall(struct.pack('>I', len(encrypted_data))) #convert len of encrypted data into bytes then sending via sendall
 client_socket.sendall(encrypted_data)
 
 #Close socket
