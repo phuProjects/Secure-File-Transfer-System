@@ -1,22 +1,30 @@
 import socket
 from encrypt import encrypt_data
 import struct
+import argparse
 
 #Reads and encrypt file
-
 def read_and_encrypt(file):
     with open(file, "rb") as f:
         f_data = f.read()
     return encrypt_data(f_data)
 
-filename = "tiny_image.png"
+#Create parse object
+parser = argparse.ArgumentParser()
+parser.add_argument("--filename", required=True, help="Name of the file to encrypt and send")
+parser.add_argument("--host", required=True, help="Host to connect to")
+parser.add_argument("--port", required=True, type=int, help="Choose a port")
+
+args = parser.parse_args()
+
+filename = args.filename
 filename_bytes = filename.encode()
 encrypted_data = read_and_encrypt(filename)
 
 
 #host & port
-HOST = "127.0.0.1"
-PORT = 5001
+HOST = args.host
+PORT = args.port
 
 #Create client socket object
 client_socket = socket.socket()
