@@ -11,9 +11,10 @@ def read_and_encrypt(file):
 
 #Create parse object
 parser = argparse.ArgumentParser()
-parser.add_argument("--filename", required=True, help="Name of the file to encrypt and send")
-parser.add_argument("--host", required=True, help="Host to connect to")
-parser.add_argument("--port", required=True, type=int, help="Choose a port")
+#Add arguments to parse object
+parser.add_argument("-f", "--filename", required=True, help="Name of the file to encrypt and send")
+parser.add_argument("-H", "--host", required=True, help="Host to connect to")
+parser.add_argument("-P", "--port", required=True, type=int, help="Choose a port")
 
 args = parser.parse_args()
 
