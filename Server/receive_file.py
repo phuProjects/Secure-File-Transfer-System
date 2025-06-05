@@ -6,8 +6,8 @@ import argparse
 
 #argparse based CLI 
 parser = argparse.ArgumentParser()
-parser.add_argument("-H", "--host", required=True, default="127.0.0.1" , help="Host to bind to (default aka local: 127.0.0.1)")
-parser.add_argument("-P", "--port", required=True, default= 5001, type=int, help="Port to listen on (default 5001)")
+parser.add_argument("-H", "--host", default="127.0.0.1" , help="Host to bind to (default aka local: 127.0.0.1)")
+parser.add_argument("-P", "--port", default= 5001, type=int, help="Port to listen on (default 5001)")
 args = parser.parse_args()
 HOST = args.host
 PORT = args.port
