@@ -6,9 +6,17 @@ import argparse
 
 #Reads and encrypt file
 def read_and_encrypt(file):
-    with open(file, "rb") as f:
-        f_data = f.read()
-    return encrypt_data(f_data)
+    try:
+        with open(file, "rb") as f:
+            f_data = f.read()
+        return encrypt_data(f_data)
+    except FileNotFoundError:
+        print(f"[!] File not found: {file}")
+    except PermissionError:
+        print(f"[!] Permission Denied: {file}")
+    except Exception as e:
+        print(f"[!] Failed to read or encrypt: '{file}': {e}")
+
 
 #Create parse object
 parser = argparse.ArgumentParser()
@@ -16,12 +24,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--filename", required=True, help="Name of the file to encrypt and send")
 parser.add_argument("-H", "--host", default="127.0.0.1", help="Host to connect to (default: 127.0.0.1)")
 parser.add_argument("-P", "--port", default=5001, type=int, help="Choose a port (default: 5001)")
-
 args = parser.parse_args()
 
 filename = args.filename
 filename_bytes = filename.encode()
 encrypted_data = read_and_encrypt(filename)
+if encrypted_data is None:
+    print("[!] Abort: could not read or encrypyt file.")
+    exit(1) #Exit program (1) = failed
 
 #host & port
 HOST = args.host
