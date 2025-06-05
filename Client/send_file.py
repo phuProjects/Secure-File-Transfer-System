@@ -1,3 +1,4 @@
+#send_file.py
 import socket
 from encrypt import encrypt_data
 import struct
@@ -21,7 +22,6 @@ args = parser.parse_args()
 filename = args.filename
 filename_bytes = filename.encode()
 encrypted_data = read_and_encrypt(filename)
-
 
 #host & port
 HOST = args.host
