@@ -2,12 +2,17 @@
 import socket
 from decrypt import decrypt_data
 import struct
+import argparse
 
 #Host & Port
-HOST = "127.0.0.1" #Localhost
-PORT = 5001 #Arbitrarily chosen port
+parser = argparse.ArgumentParser()
+parser.add_argument("-H", "--host", required=True, help="Host to bind to (default aka local: 127.0.0.1)")
+parser.add_argument("-P", "--port", required=True, help="Port to listen on (default 5001)")
+args = parser.parse_args()
+HOST = args.host
+PORT = args.port
 
-#Create a server socket object using default parameters (IPv4 + TCP)
+#server socket object using default parameters (IPv4 + TCP)
 server_socket = socket.socket()
 
 #Bind socket to specific host and port
@@ -28,27 +33,32 @@ filename_len = struct.unpack("!I", filename_len_bytes)[0]
 #Step 2: Receive filename
 filename_bytes = conn.recv(filename_len)
 filename = filename_bytes.decode()
-
-#Step 3: Receive length of encrypted data
+#---------------------
+#Receive length of encrypted data
+#---------------------
 data_len_bytes = conn.recv(4)
 data_len = struct.unpack("!I", data_len_bytes)[0]
 
-#Step 4: Receive the encrypted data
-#Because encrypted data may be large, read in chunks
+#---------------------
+#Receive encrypted data in chunks
+#---------------------
 encrypted_data = b""
 while len(encrypted_data) < data_len:
     packet = conn.recv(min(4096, data_len - len(encrypted_data)))
     if not packet:
         break
     encrypted_data += packet
-
-#Step 5: Decrypt data
+print("[+]Data has been received")
+#---------------------
+#Decrypt and save data
+#---------------------
 decrypted_data = decrypt_data(encrypted_data)
 
-#Step 6:Save the decrypted file
 with open(filename, "wb") as file:
     file.write(decrypted_data)
 print("[+]Successfully saved data")
+#---------------------
 #Close connection & Socket
+#---------------------
 conn.close()
 server_socket.close()
