@@ -37,18 +37,21 @@ if encrypted_data is None:
 HOST = args.host
 PORT = args.port
 
-#Create client socket object
-client_socket = socket.socket()
 
-#Connect to server
-client_socket.connect((HOST,PORT))
+def send_encrypted_file(filename_bytes, encrypted_data, HOST, PORT):
+    
+    #Create client socket object
+    client_socket = socket.socket()
 
-#Send data to server
-client_socket.sendall(struct.pack('>I', len(filename_bytes))) #convert len of filename into bytes then sending via sendall
-client_socket.sendall(filename_bytes)
+    #Connect to server
+    client_socket.connect((HOST,PORT))
 
-client_socket.sendall(struct.pack('>I', len(encrypted_data))) #convert len of encrypted data into bytes then sending via sendall
-client_socket.sendall(encrypted_data)
+    #Send data to server
+    client_socket.sendall(struct.pack('>I', len(filename_bytes))) #convert len of filename into bytes then sending via sendall
+    client_socket.sendall(filename_bytes)
 
-#Close socket
-client_socket.close()
+    client_socket.sendall(struct.pack('>I', len(encrypted_data))) #convert len of encrypted data into bytes then sending via sendall
+    client_socket.sendall(encrypted_data)
+
+    #Close socket
+    client_socket.close()
