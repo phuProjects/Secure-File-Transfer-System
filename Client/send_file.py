@@ -4,6 +4,11 @@ from encrypt import encrypt_data
 import struct
 import argparse
 
+#Constants(Default vals)
+DEFAULT_HOST = "127.0.0.1"
+DEFAULT_PORT = 5001
+TIMEOUT = 5
+
 #Reads and encrypt file
 def read_and_encrypt(file):
     try:
@@ -17,27 +22,7 @@ def read_and_encrypt(file):
     except Exception as e:
         print(f"[!] Failed to read or encrypt: '{file}': {e}")
 
-
-#Create parse object
-parser = argparse.ArgumentParser()
-#Add arguments to parse object
-parser.add_argument("-f", "--filename", required=True, help="Name of the file to encrypt and send")
-parser.add_argument("-H", "--host", default="127.0.0.1", help="Host to connect to (default: 127.0.0.1)")
-parser.add_argument("-P", "--port", default=5001, type=int, help="Choose a port (default: 5001)")
-args = parser.parse_args()
-
-filename = args.filename
-filename_bytes = filename.encode()
-encrypted_data = read_and_encrypt(filename)
-if encrypted_data is None:
-    print("[!] Abort: could not read or encrypyt file.")
-    exit(1) #Exit program (1) = failed
-
-#host & port
-HOST = args.host
-PORT = args.port
-
-
+#Send encrypted file over socket
 def send_encrypted_file(filename_bytes, encrypted_data, HOST, PORT):
     try:
         #Create client socket object
@@ -72,4 +57,28 @@ def send_encrypted_file(filename_bytes, encrypted_data, HOST, PORT):
     finally: #Always making sure socket is closed after
         client_socket.close()
 
-send_encrypted_file(filename_bytes, encrypted_data, HOST, PORT)
+
+def main():
+    #Create parse object
+    parser = argparse.ArgumentParser()
+
+    #Add arguments to parse object
+    parser.add_argument("-f", "--filename", required=True, help="Name of the file to encrypt and send")
+    parser.add_argument("-H", "--host", default=DEFAULT_HOST, help="Host to connect to (default: 127.0.0.1)")
+    parser.add_argument("-P", "--port", default=DEFAULT_PORT, type=int, help="Choose a port (default: 5001)")
+    args = parser.parse_args()
+
+    filename = args.filename
+    host = args.host
+    port = args.port
+
+    encrypted_data = read_and_encrypt(filename)
+    if encrypted_data is None:
+        print("[!] Abort: could not read or encrypyt file.")
+        exit(1) #Exit program (1) = failed
+
+    filename_bytes = filename.encode()
+    send_encrypted_file(filename_bytes, encrypted_data, host, port)
+
+if __name__ == "__main__":
+    main()
