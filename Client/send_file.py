@@ -39,19 +39,37 @@ PORT = args.port
 
 
 def send_encrypted_file(filename_bytes, encrypted_data, HOST, PORT):
+    try:
+        #Create client socket object
+        client_socket = socket.socket()
+        client_socket.settimeout(5) #Set time for connect/send/recv
+
+        #Connect to server
+        client_socket.connect((HOST,PORT))
+
+        #Send data to server
+        client_socket.sendall(struct.pack('>I', len(filename_bytes))) #convert len of filename into bytes then sending via sendall
+        client_socket.sendall(filename_bytes)
+
+        client_socket.sendall(struct.pack('>I', len(encrypted_data))) #convert len of encrypted data into bytes then sending via sendall
+        client_socket.sendall(encrypted_data)
+
+    except ConnectionRefusedError:
+        print(f"[!] Connection was refused: recheck server")
     
-    #Create client socket object
-    client_socket = socket.socket()
+    except socket.gaierror:
+        print("[!] Failed to connect: Invalid host name")
+    
+    except socket.timeout:
+        print("[!] Connection timed out")
+    
+    except OverflowError:
+        print("[!] Invalid port number: must be between 0-65535")
 
-    #Connect to server
-    client_socket.connect((HOST,PORT))
+    except Exception as e:
+        print(f"[!] Failed to send data: {e}")
 
-    #Send data to server
-    client_socket.sendall(struct.pack('>I', len(filename_bytes))) #convert len of filename into bytes then sending via sendall
-    client_socket.sendall(filename_bytes)
+    finally: #Always making sure socket is closed after
+        client_socket.close()
 
-    client_socket.sendall(struct.pack('>I', len(encrypted_data))) #convert len of encrypted data into bytes then sending via sendall
-    client_socket.sendall(encrypted_data)
-
-    #Close socket
-    client_socket.close()
+send_encrypted_file(filename_bytes, encrypted_data, HOST, PORT)
