@@ -3,6 +3,7 @@ import socket
 from decrypt import decrypt_data
 import struct
 import argparse
+import time
 
 #argparse based CLI 
 parser = argparse.ArgumentParser()
@@ -19,9 +20,11 @@ server_socket.listen(1)
 print(f"[+]Listening on {HOST}:{PORT}...")
 
 #Accept connection from client
+
 conn, addr = server_socket.accept()
 print(f"[+]Connection established with {addr}")
 
+time.sleep(10)
 #Receive length of filename 
 filename_len_bytes = conn.recv(4)
 filename_len = struct.unpack("!I", filename_len_bytes)[0]
