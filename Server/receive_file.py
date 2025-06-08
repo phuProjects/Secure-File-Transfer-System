@@ -3,56 +3,71 @@ import socket
 from decrypt import decrypt_data
 import struct
 import argparse
-import time
 
-#argparse based CLI 
-parser = argparse.ArgumentParser()
-parser.add_argument("-H", "--host", default="127.0.0.1" , help="Host to bind to (default aka local: 127.0.0.1)")
-parser.add_argument("-P", "--port", default= 5001, type=int, help="Port to listen on (default 5001)")
-args = parser.parse_args()
-HOST = args.host
-PORT = args.port
+#Constants
+DEFAULT_HOST = "127.0.0.1"
+DEFAULT_PORT = 5001
+BUFFER_SIZE = 4096
 
-#Creating server socket
-server_socket = socket.socket()
-server_socket.bind((HOST,PORT))
-server_socket.listen(1)
-print(f"[+]Listening on {HOST}:{PORT}...")
+def parse_args():
+    #argparse based CLI 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-H", "--host", default="127.0.0.1" , help="Host to bind to (default aka local: 127.0.0.1)")
+    parser.add_argument("-P", "--port", default= 5001, type=int, help="Port to listen on (default 5001)")
+    return parser.parse_args()
 
-#Accept connection from client
+def receive_file(conn):
+    #Receive length of filename 
+    filename_len_bytes = conn.recv(4)
+    filename_len = struct.unpack("!I", filename_len_bytes)[0]
 
-conn, addr = server_socket.accept()
-print(f"[+]Connection established with {addr}")
+    #Receive filename
+    filename_bytes = conn.recv(filename_len)
+    filename = filename_bytes.decode()
 
-time.sleep(10)
-#Receive length of filename 
-filename_len_bytes = conn.recv(4)
-filename_len = struct.unpack("!I", filename_len_bytes)[0]
+    #Receive length of encrypted data
+    data_len_bytes = conn.recv(4)
+    data_len = struct.unpack("!I", data_len_bytes)[0]
 
-#Receive filename
-filename_bytes = conn.recv(filename_len)
-filename = filename_bytes.decode()
+    #Receive encrypted data in chunks
+    encrypted_data = b""
+    while len(encrypted_data) < data_len:
+        packet = conn.recv(min(BUFFER_SIZE, data_len - len(encrypted_data)))
+        if not packet:
+            break
+        encrypted_data += packet
+    print("[+]Data has been received")
 
-#Receive length of encrypted data
-data_len_bytes = conn.recv(4)
-data_len = struct.unpack("!I", data_len_bytes)[0]
+    #Decrypt and save data
+    decrypted_data = decrypt_data(encrypted_data)
 
-#Receive encrypted data in chunks
-encrypted_data = b""
-while len(encrypted_data) < data_len:
-    packet = conn.recv(min(4096, data_len - len(encrypted_data)))
-    if not packet:
-        break
-    encrypted_data += packet
-print("[+]Data has been received")
+    with open(filename, "wb") as file:
+        file.write(decrypted_data)
+    print("[+]Successfully saved data")
 
-#Decrypt and save data
-decrypted_data = decrypt_data(encrypted_data)
+def start_server(host,port):
 
-with open(filename, "wb") as file:
-    file.write(decrypted_data)
-print("[+]Successfully saved data")
+    server_socket = socket.socket()
+    server_socket.bind((host,port))
 
-#Close connection & Socket
-conn.close()
-server_socket.close()
+    #Listening for connection
+    server_socket.listen(1)
+    print(f"[+]Listening on {host}:{port}...")
+
+    #Accept connection from client
+    conn, addr = server_socket.accept()
+    print(f"[+]Connection established with {addr}")
+
+    #Receive file/data
+    receive_file(conn)
+
+    #Close connection & Socket
+    conn.close()
+    server_socket.close()
+
+def main():
+    args = parse_args()
+    start_server(args.host, args.port)
+
+if __name__ == "__main__":
+    main()
