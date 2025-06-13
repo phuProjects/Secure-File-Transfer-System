@@ -17,33 +17,47 @@ def parse_args():
     return parser.parse_args()
 
 def receive_file(conn):
-    #Receive length of filename 
-    filename_len_bytes = conn.recv(4)
-    filename_len = struct.unpack("!I", filename_len_bytes)[0]
+    try:
+        #Receive length of filename 
+        filename_len_bytes = conn.recv(4)
+        if len(filename_len_bytes) < 4:
+            raise ValueError("Incomplete filename length received.")
+        filename_len = struct.unpack("!I", filename_len_bytes)[0]
 
-    #Receive filename
-    filename_bytes = conn.recv(filename_len)
-    filename = filename_bytes.decode()
+        #Receive filename
+        filename_bytes = conn.recv(filename_len)
+        if len(filename_bytes) < filename_len:
+            raise ValueError("Incomplete filename received.")
+        filename = filename_bytes.decode()
 
-    #Receive length of encrypted data
-    data_len_bytes = conn.recv(4)
-    data_len = struct.unpack("!I", data_len_bytes)[0]
+        #Receive length of encrypted data
+        data_len_bytes = conn.recv(4)
+        if len(data_len_bytes) < 4:
+            raise ValueError("Incomplete data length received.")
+        data_len = struct.unpack("!I", data_len_bytes)[0]
 
-    #Receive encrypted data in chunks
-    encrypted_data = b""
-    while len(encrypted_data) < data_len:
-        packet = conn.recv(min(BUFFER_SIZE, data_len - len(encrypted_data)))
-        if not packet:
-            break
-        encrypted_data += packet
-    print("[+]Data has been received")
+        #Receive encrypted data in chunks
+        encrypted_data = b""
+        while len(encrypted_data) < data_len:
+            packet = conn.recv(min(BUFFER_SIZE, data_len - len(encrypted_data)))
+            if not packet:
+                break
+            encrypted_data += packet
+        print("[+]Data has been received")
 
-    #Decrypt and save data
-    decrypted_data = decrypt_data(encrypted_data)
+        #Decrypt and save data
+        decrypted_data = decrypt_data(encrypted_data)
 
-    with open(filename, "wb") as file:
-        file.write(decrypted_data)
-    print("[+]Successfully saved data")
+        with open(filename, "wb") as file:
+            file.write(decrypted_data)
+        print("[+]Successfully saved data")
+    except (ValueError, struct.error) as e:
+        print(f"[!] Data fpr,at error: {e}")
+    except ConnectionError as e:
+        print(f"[!] Connection error: {e}")
+    except Exception as e:
+        print(f"[!] Unexpected error: {e}")
+
 
 def start_server(host,port):
 
