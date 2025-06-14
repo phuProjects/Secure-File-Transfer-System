@@ -39,20 +39,31 @@ def receive_file(conn):
         #Receive encrypted data in chunks
         encrypted_data = b""
         while len(encrypted_data) < data_len:
-            packet = conn.recv(min(BUFFER_SIZE, data_len - len(encrypted_data)))
-            if not packet:
-                break
-            encrypted_data += packet
+            try:
+                packet = conn.recv(min(BUFFER_SIZE, data_len - len(encrypted_data)))
+                if not packet:
+                    raise ConnectionError("Connection closed while receiving data")
+                encrypted_data += packet
+            except socket.timeout:
+                print("[!] Timeout while receiving data")
+                return
         print("[+]Data has been received")
 
         #Decrypt and save data
-        decrypted_data = decrypt_data(encrypted_data)
+        try:
+            decrypted_data = decrypt_data(encrypted_data)
+        except Exception as e:
+            print(f"[!] Failed to decrypt data: {e}")
 
-        with open(filename, "wb") as file:
-            file.write(decrypted_data)
-        print("[+]Successfully saved data")
+        try:
+            with open(filename, "wb") as file:
+                file.write(decrypted_data)
+            print("[+]Successfully saved data")
+        except OSError as e:
+            print(f"[!] Failed to write to file: {e}")
+
     except (ValueError, struct.error) as e:
-        print(f"[!] Data fpr,at error: {e}")
+        print(f"[!] Data format error: {e}")
     except ConnectionError as e:
         print(f"[!] Connection error: {e}")
     except Exception as e:
