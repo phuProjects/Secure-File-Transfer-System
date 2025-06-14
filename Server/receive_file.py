@@ -59,7 +59,7 @@ def receive_file(conn):
             with open(filename, "wb") as file:
                 file.write(decrypted_data)
             print("[+]Successfully saved data")
-        except OSError as e:
+        except OSError as e: #
             print(f"[!] Failed to write to file: {e}")
 
     except (ValueError, struct.error) as e:
