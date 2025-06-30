@@ -71,10 +71,15 @@ def receive_file(conn):
 
 
 def start_server(host,port):
-
-    server_socket = socket.socket()
-    server_socket.bind((host,port))
-
+    try:
+        server_socket = socket.socket()
+        server_socket.bind((host,port))
+    except PermissionError:
+        print("[!] Permission denied: Using a port below 1024")
+        return
+    except Exception as e:
+        print(f"[!] Unexpected error during bind: {e}")
+        return
     #Listening for connection
     server_socket.listen(1)
     print(f"[+]Listening on {host}:{port}...")
