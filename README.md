@@ -1,21 +1,21 @@
-# Secure-File-Transfer-System
-Python based program that securely transfer files locally (For now) using AES encryption over TCP sockets.
+# 🔐 Secure File Transfer with Encryption
 
-**Use Case:**
-A cybersecurity analyst needs to send sensitive files (e.g., reports, logs) from a laptop to a secure server without risking exposure to network threats.
+A Python-based system for securely transferring files between devices over a local network using sockets and AES encryption.
 
 ---
 
 ## 📸 Demo (Optional but STRONGLY recommended)
-![screenshot or gif](link_to_image_or_demo.gif)
+<!-- Replace with an actual demo gif or screenshot -->
+![demo](link_to_image_or_demo.gif)
 
 ---
 
 ## 📂 Features
 
-- ✅ Feature 1 (e.g., "Detects human presence using YOLOv8")
-- ✅ Feature 2 (e.g., "Real-time alerts via email when weapon is detected")
-- ✅ Feature 3 (e.g., "Supports live video or recorded footage")
+- ✅ Secure file transfers using AES symmetric encryption
+- ✅ Supports binary files of any type
+- ✅ Command-line interface for custom port and IP settings
+- ✅ Length-prefixed protocol for structured communication
 
 ---
 
@@ -23,11 +23,12 @@ A cybersecurity analyst needs to send sensitive files (e.g., reports, logs) from
 
 | Technology | Usage |
 |------------|--------|
-| Python     | Main programming language |
-| OpenCV     | For image/video processing |
-| YOLOv8     | Object detection |
-| Flask      | Web interface (if any) |
-| ...        | Add more as needed |
+| Python     | Core programming language |
+| socket     | For creating TCP server/client communication |
+| struct     | Handling binary data for structured messaging |
+| argparse   | Command-line interface |
+| dotenv     | Managing environment variables securely |
+| pycryptodome | Encryption and decryption (AES) |
 
 ---
 
@@ -35,15 +36,14 @@ A cybersecurity analyst needs to send sensitive files (e.g., reports, logs) from
 
 ### Prerequisites
 
-- Python 3.x
-- pip
-- (List any required libraries or frameworks)
+- Python 3.8+
+- `pip` installed
 
 ### Installation
 
 ```bash
-git clone https://github.com/yourusername/project-name.git
-cd project-name
+git clone https://github.com/yourusername/secure-file-transfer.git
+cd secure-file-transfer
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
-
-
