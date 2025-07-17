@@ -42,7 +42,7 @@ A Python-based system for securely transferring files between devices over a loc
 ### Installation
 
 ```bash
-git clone https://github.com/phuProjects/secure-file-transfer.git
+git clone https://github.com/phuProjects/Secure-File-Transfer-System.git
 cd secure-file-transfer
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
