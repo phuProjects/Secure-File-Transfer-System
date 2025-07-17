@@ -4,7 +4,7 @@ A Python-based system for securely transferring files between devices over a loc
 
 ---
 
-## 📸 Demo (Optional but STRONGLY recommended)
+## 📸 Demo 
 <!-- Replace with an actual demo gif or screenshot -->
 ![demo](link_to_image_or_demo.gif)
 Currently no demo, Program is CLI supported 
